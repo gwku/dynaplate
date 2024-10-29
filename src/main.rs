@@ -2,15 +2,18 @@ mod cli;
 mod template;
 
 use crate::cli::Args;
-use crate::template::{Configuration, Dependency, EnvVar, Variable};
+use crate::template::{
+    Configuration, Dependency, EnvVar, TemplateFile, TemplateFileType, Variable,
+};
 use clap::Parser;
 use log::{debug, error, info};
 use std::collections::HashMap;
 use std::env;
 use std::error::Error;
+use std::fmt::format;
 use std::fs;
 use std::io;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::process::{Command, Stdio};
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -21,6 +24,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     let config = load_config(&config_content)?;
 
     create_project_dir(&args.project_dir)?;
+
+    // execute_pre_commands(&config.pre_commands);
+
+    create_template_files(&config.template_files).expect("Failed to create template files.");
 
     let environment_variables = create_env_vars(&config.environment);
 
@@ -33,7 +40,71 @@ fn main() -> Result<(), Box<dyn Error>> {
         &args.verbose,
     )?;
 
+    // execute_post_commands(&config.pre_commands);
+
     Ok(())
+}
+
+fn create_template_files(files: &Vec<TemplateFile>) -> io::Result<()> {
+    info!("Template files: creating...");
+
+    for file in files.iter() {
+        match file.file_type {
+            TemplateFileType::Folder => {
+                fs::create_dir_all(&file.destination)?;
+                copy_folder(&file.source, &file.destination)?;
+            }
+            TemplateFileType::File => {
+                if fs::metadata(&file.destination)
+                    .map(|meta| meta.is_dir())
+                    .unwrap_or(false)
+                {
+                    return Err(io::Error::new(
+                        io::ErrorKind::InvalidInput,
+                        format!(
+                            "Destination {} is a directory (while file_type is File)",
+                            file.destination
+                        ),
+                    ));
+                }
+                fs::copy(&file.source, &file.destination)?;
+            }
+        }
+        info!("Template files: created {}", file.destination);
+    }
+    info!("Template files have been created!");
+    Ok(())
+}
+
+fn copy_folder<P: AsRef<Path>>(source: P, destination: P) -> io::Result<()> {
+    let source_path = source.as_ref();
+    let destination_path = destination.as_ref();
+
+    for entry in fs::read_dir(source_path)? {
+        let entry = entry?;
+        let entry_path = entry.path();
+        let file_name = entry_path
+            .file_name()
+            .ok_or_else(|| io::Error::new(io::ErrorKind::Other, "Failed to get file name"))?;
+
+        let dest_path = destination_path.join(file_name);
+
+        if entry_path.is_dir() {
+            fs::create_dir_all(&dest_path)?;
+            copy_folder(&entry_path, &dest_path)?;
+        } else {
+            fs::copy(&entry_path, &dest_path)?;
+        }
+    }
+    Ok(())
+}
+
+fn execute_pre_commands(commands: &Vec<template::Command>) {
+    todo!()
+}
+
+fn execute_post_commands(commands: &Vec<template::Command>) {
+    todo!()
 }
 
 fn load_config(config_content: &str) -> Result<Configuration, Box<dyn Error>> {
@@ -74,13 +145,16 @@ fn execute_dependency_commands(
         if dep.is_applicable(variables).unwrap_or(false) {
             let args: Vec<&str> = dep.command.split_whitespace().collect();
             if args.is_empty() {
-                return Err(format!("Command: dependency {} has empty command.", dep.name));
+                return Err(format!(
+                    "Command: dependency {} has empty command.",
+                    dep.name
+                ));
             }
 
             let mut cmd = Command::new(args[0]);
             cmd.current_dir(project_dir).envs(&envs);
 
-            if *verbose {
+            if !*verbose {
                 cmd.stdout(Stdio::null()).stderr(Stdio::null());
             };
 
@@ -113,6 +187,9 @@ fn execute_dependency_commands(
         }
     }
     info!("-------------------------------------------");
-    info!("Command: Finished executing ({} commands).", dependencies.len());
+    info!(
+        "Command: Finished executing ({} commands).",
+        dependencies.len()
+    );
     Ok(())
 }

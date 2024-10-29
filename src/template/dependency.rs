@@ -50,10 +50,10 @@ impl fmt::Display for Dependency {
 
 #[derive(Debug, Deserialize)]
 pub struct Condition {
-    pub(crate) variable: String,
-    pub(crate) operator: ConditionOperator,
+    pub variable: String,
+    pub operator: ConditionOperator,
     #[serde(deserialize_with = "custom_deserialize_condition_value")]
-    pub(crate) value: VariableValue,
+    pub value: VariableValue,
 }
 
 impl fmt::Display for Condition {

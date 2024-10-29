@@ -1,17 +1,24 @@
 use crate::{Dependency, EnvVar, Variable};
 use serde::Deserialize;
 use std::fmt;
-use crate::template::Command;
+use crate::template::{Command, TemplateFile};
 
 #[derive(Debug, Deserialize)]
 pub struct Configuration {
     pub name: String,
     pub description: String,
     pub version: String,
+    #[serde(default)]
     pub pre_commands: Vec<Command>,
+    #[serde(default)]
     pub environment: Vec<EnvVar>,
+    #[serde(default)]
     pub dependencies: Vec<Dependency>,
+    #[serde(default)]
     pub variables: Vec<Variable>,
+    #[serde(default)]
+    pub template_files: Vec<TemplateFile>,
+    #[serde(default)]
     pub post_commands: Vec<Command>,
 }
 

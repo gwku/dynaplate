@@ -3,8 +3,8 @@ use std::fmt;
 
 #[derive(Debug, Deserialize)]
 pub struct EnvVar {
-    pub(crate) name: String,
-    pub(crate) value: String,
+    pub name: String,
+    pub value: String,
 }
 
 impl fmt::Display for EnvVar {
