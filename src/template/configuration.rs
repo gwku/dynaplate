@@ -1,7 +1,8 @@
+use crate::template::{Command, TemplateFile};
 use crate::{Dependency, EnvVar, Variable};
 use serde::Deserialize;
+use std::error::Error;
 use std::fmt;
-use crate::template::{Command, TemplateFile};
 
 #[derive(Debug, Deserialize)]
 pub struct Configuration {
@@ -30,4 +31,9 @@ impl fmt::Display for Configuration {
             self.name, self.description, self.version, self.pre_commands, self.environment, self.dependencies, self.variables, self.post_commands
         )
     }
+}
+
+pub fn load_config(config_content: &str) -> Result<Configuration, Box<dyn Error>> {
+    serde_yml::from_str(config_content)
+        .map_err(|e| format!("Failed to parse config file: {}", e).into())
 }
