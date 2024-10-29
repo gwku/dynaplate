@@ -24,7 +24,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     let environment_variables = create_env_vars(&config.environment);
 
-    execute_commands(
+    execute_dependency_commands(
         &config.dependencies,
         &args.project_dir,
         &config.variables,
@@ -61,7 +61,7 @@ fn create_env_vars(env_vars: &[EnvVar]) -> HashMap<String, String> {
         .collect()
 }
 
-fn execute_commands(
+fn execute_dependency_commands(
     dependencies: &[Dependency],
     project_dir: &PathBuf,
     variables: &[Variable],
