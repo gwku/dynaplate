@@ -5,7 +5,8 @@ use std::path::{Path, PathBuf};
 use std::process::Stdio;
 use clap::Parser;
 use crate::cli::Args;
-use crate::parser::types::{CommandTrait, EnvVar, TemplateFile, TemplateFileType, Variable};
+use crate::parser::{EnvVar, TemplateFile, TemplateFileType, Variable};
+use crate::parser::traits::CommandTrait;
 
 mod cli;
 
