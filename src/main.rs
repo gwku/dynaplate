@@ -1,19 +1,19 @@
-use std::{env, fs, io};
+use crate::cli::Args;
+use crate::parser::traits::CommandTrait;
+use crate::parser::{EnvVar, TemplateFile, TemplateFileType, Variable};
+use clap::Parser;
 use std::collections::HashMap;
 use std::error::Error;
 use std::path::{Path, PathBuf};
 use std::process::Stdio;
-use clap::Parser;
-use crate::cli::Args;
-use crate::parser::{EnvVar, TemplateFile, TemplateFileType, Variable};
-use crate::parser::traits::CommandTrait;
+use std::{env, fs, io};
 
 mod cli;
 
 mod parser;
+mod utils;
 
 fn main() -> Result<(), Box<dyn Error>> {
-
     let args = Args::parse();
     let config_yaml = fs::read_to_string(&args.config).expect("Failed to read config file");
     let config = parser::from_yaml(&config_yaml)?;
@@ -68,7 +68,6 @@ pub fn create_project_dir(project_dir: &PathBuf, dry_run: &bool) -> Result<(), i
     }
     Ok(())
 }
-
 
 pub fn create_template_files(files: &Vec<TemplateFile>, dry_run: &bool) -> io::Result<()> {
     println!("Template files: creating...");

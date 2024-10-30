@@ -14,5 +14,5 @@ pub struct Args {
     pub dry_run: bool,
     #[arg(short, long, action)]
     #[clap(default_value = "false", short = 'v')]
-    pub verbose: bool
+    pub verbose: bool,
 }

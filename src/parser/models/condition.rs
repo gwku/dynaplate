@@ -1,8 +1,8 @@
-use std::fmt;
-use serde::{Deserialize, Deserializer};
-use serde::de::Error;
-use serde_yml::Value;
 use crate::parser::{ConditionOperator, VariableValue};
+use serde::de::Error;
+use serde::{Deserialize, Deserializer};
+use serde_yml::Value;
+use std::fmt;
 
 #[derive(Debug, Deserialize)]
 pub struct Condition {
@@ -47,4 +47,3 @@ impl fmt::Display for Condition {
         )
     }
 }
-

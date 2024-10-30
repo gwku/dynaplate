@@ -1,7 +1,7 @@
-use std::fmt;
-use serde::Deserialize;
 use crate::parser::traits::CommandTrait;
 use crate::parser::Variable;
+use serde::Deserialize;
+use std::fmt;
 
 #[derive(Debug, Deserialize)]
 pub struct Command {

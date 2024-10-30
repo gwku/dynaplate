@@ -1,6 +1,6 @@
-use std::fmt;
-use serde::Deserialize;
 use crate::parser::{Command, Dependency, EnvVar, TemplateFile, Variable};
+use serde::Deserialize;
+use std::fmt;
 
 #[derive(Debug, Deserialize)]
 pub struct Configuration {
