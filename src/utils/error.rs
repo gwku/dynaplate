@@ -1,3 +1,4 @@
+use crate::parser::ParserError;
 use std::io;
 use thiserror::Error;
 
@@ -16,4 +17,7 @@ pub enum UtilsError {
 
     #[error("Command {name} failed: cause")]
     CommandFailed { name: String },
+
+    #[error("Command failed because of parse error: {0}")]
+    CommandFailedDueToParseError(#[from] ParserError),
 }

@@ -2,6 +2,7 @@ use crate::parser::traits::CommandTrait;
 use crate::parser::Variable;
 use crate::utils::error::UtilsResult;
 use crate::utils::UtilsError;
+use crate::utils::UtilsError::{CommandFailedDueToParseError, CommandNotApplicable};
 use std::collections::HashMap;
 use std::path::PathBuf;
 
@@ -21,11 +22,11 @@ where
                 println!("Successfully executed command: {}", command.name());
             }
             Err(e) => match e {
-                UtilsError::CommandNotApplicable { .. } => {
+                CommandNotApplicable { .. } => {
                     println!("Skipped command: {} (false condition)", command.name());
                 }
-                _ => {
-                    eprintln!("Failed executing command: {}", command.name());
+                e => {
+                    eprintln!("Failed executing command '{}': {}", command.name(), e);
                 }
             },
         };
@@ -36,14 +37,12 @@ pub fn execute_command<T: CommandTrait>(command: &T, project: &Project) -> Utils
     match command.is_applicable(&project.variables) {
         Ok(condition) => {
             if !condition {
-                return Err(UtilsError::CommandNotApplicable {
+                return Err(CommandNotApplicable {
                     name: command.name().to_string(),
                 });
             }
         }
-        Err(_) => {
-            todo!()
-        }
+        Err(e) => return Err(CommandFailedDueToParseError(e)),
     }
 
     let args: Vec<&str> = command.command().split_whitespace().collect();
