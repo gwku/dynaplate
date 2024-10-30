@@ -1,5 +1,7 @@
+use crate::parser::traits::condition::ConditionTrait;
 use crate::parser::traits::CommandTrait;
 use crate::parser::Variable;
+use crate::utils::condition::has_applicable_conditions;
 use crate::utils::error::UtilsResult;
 use crate::utils::UtilsError;
 use crate::utils::UtilsError::{CommandFailedDueToParseError, CommandNotApplicable};
@@ -12,10 +14,7 @@ pub struct Project {
     pub variables: Vec<Variable>,
 }
 
-pub fn execute_commands<T>(commands: &[T], project: &Project)
-where
-    T: CommandTrait,
-{
+pub fn execute_commands<T: CommandTrait + ConditionTrait>(commands: &[T], project: &Project) {
     for command in commands {
         match execute_command(command, project) {
             Ok(_) => {
@@ -33,8 +32,11 @@ where
     }
 }
 
-pub fn execute_command<T: CommandTrait>(command: &T, project: &Project) -> UtilsResult<()> {
-    match command.is_applicable(&project.variables) {
+pub fn execute_command<T: CommandTrait + ConditionTrait>(
+    command: &T,
+    project: &Project,
+) -> UtilsResult<()> {
+    match has_applicable_conditions(command.get_conditions(), &project.variables) {
         Ok(condition) => {
             if !condition {
                 return Err(CommandNotApplicable {

@@ -12,4 +12,7 @@ pub enum ParserError {
 
     #[error("Variable does not exist: {0}")]
     VariableDoesNotExist(String),
+
+    #[error("Specified default value is invalid: {0}")]
+    InvalidDefaultValue(String),
 }

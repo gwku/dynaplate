@@ -1,6 +1,6 @@
-use crate::parser::error::ParseResult;
+use crate::parser::traits::condition::ConditionTrait;
 use crate::parser::traits::CommandTrait;
-use crate::parser::{Condition, ConditionOperator, ParserError, Variable};
+use crate::parser::Condition;
 use serde::Deserialize;
 use std::fmt;
 
@@ -8,37 +8,15 @@ use std::fmt;
 pub struct Dependency {
     pub name: String,
     pub command: String,
-    pub condition: Option<Vec<Condition>>,
-}
-
-impl Dependency {
-    pub fn is_applicable(&self, variables: &[Variable]) -> ParseResult<bool> {
-        if let Some(conditions) = &self.condition {
-            for condition in conditions {
-                let var = variables
-                    .iter()
-                    .find(|var| var.name == condition.variable)
-                    .ok_or_else(|| ParserError::VariableDoesNotExist(condition.variable.clone()))?;
-
-                let condition_applicable = match condition.operator {
-                    ConditionOperator::Equals => var.value.as_ref() == Some(&condition.value),
-                };
-
-                if !condition_applicable {
-                    return Ok(false);
-                }
-            }
-        }
-        Ok(true)
-    }
+    pub conditions: Option<Vec<Condition>>,
 }
 
 impl fmt::Display for Dependency {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "Dependency:\n  Name: {}\n  Command: {}\n  When: {:?}",
-            self.name, self.command, self.condition
+            "Dependency:\n  Name: {}\n  Command: {}\n  Conditions: {:?}",
+            self.name, self.command, self.conditions
         )
     }
 }
@@ -51,8 +29,10 @@ impl CommandTrait for Dependency {
     fn name(&self) -> &str {
         &self.name
     }
+}
 
-    fn is_applicable(&self, variables: &[Variable]) -> ParseResult<bool> {
-        self.is_applicable(variables)
+impl ConditionTrait for Dependency {
+    fn get_conditions(&self) -> Option<&[Condition]> {
+        self.conditions.as_deref()
     }
 }

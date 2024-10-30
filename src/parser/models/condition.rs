@@ -29,12 +29,12 @@ where
                 .map(|v| {
                     v.as_str()
                         .map(String::from)
-                        .ok_or_else(|| D::Error::custom("Expected a string in array"))
+                        .ok_or_else(|| Error::custom("Expected a string in array"))
                 })
                 .collect();
             strings.map(VariableValue::Select)
         }
-        _ => Err(D::Error::custom("Expected a string, boolean, or array")),
+        _ => Err(Error::custom("Expected a string, boolean, or array")),
     }
 }
 

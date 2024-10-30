@@ -7,6 +7,7 @@ pub mod environment;
 pub mod template_file;
 pub mod template_file_type;
 pub mod variable;
+mod variable_type;
 pub mod variable_value;
 
 pub use command::Command;
@@ -18,4 +19,5 @@ pub use environment::EnvVar;
 pub use template_file::TemplateFile;
 pub use template_file_type::TemplateFileType;
 pub use variable::Variable;
+pub use variable_type::VariableType;
 pub use variable_value::VariableValue;

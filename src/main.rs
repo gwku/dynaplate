@@ -1,9 +1,13 @@
-use crate::cli::{Args, ConfigType};
-use crate::error::AppError;
-use crate::parser::models::environment::EnvVarSliceExt;
-use crate::utils::command::execute_commands;
-use crate::utils::file::{copy_template_files, ensure_project_existence};
-use crate::utils::Project;
+use crate::{
+    cli::{prompt::prompt_for_variable, Args, ConfigType},
+    error::AppError,
+    parser::{models::environment::EnvVarSliceExt, Variable},
+    utils::{
+        command::execute_commands,
+        file::{copy_template_files, ensure_project_existence},
+        Project,
+    },
+};
 use clap::Parser;
 use std::fs;
 
@@ -25,11 +29,12 @@ fn main() -> Result<(), AppError> {
     ensure_project_existence(&args.project_dir)?;
 
     let envs = &config.environment.to_env_map();
+    let variables = gather_variables(&config.variables)?;
 
     let project = Project {
         path: args.project_dir,
         envs: envs.to_owned(),
-        variables: config.variables,
+        variables,
     };
 
     execute_commands(&config.pre_commands, &project);
@@ -38,4 +43,21 @@ fn main() -> Result<(), AppError> {
     execute_commands(&config.post_commands, &project);
 
     Ok(())
+}
+
+fn gather_variables(variables: &[Variable]) -> Result<Vec<Variable>, AppError> {
+    variables
+        .iter()
+        .map(|variable| {
+            let user_input = prompt_for_variable(variable)?;
+            Ok(Variable {
+                name: variable.name.clone(),
+                description: variable.description.to_string(),
+                default: variable.default.clone(),
+                var_type: variable.var_type.clone(),
+                options: variable.options.clone(),
+                value: user_input,
+            })
+        })
+        .collect()
 }

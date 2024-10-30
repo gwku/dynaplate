@@ -15,7 +15,7 @@ pub enum UtilsError {
     #[error("Command is empty {name}")]
     CommandIsEmpty { name: String },
 
-    #[error("Command {name} failed: cause")]
+    #[error("Command {name} failed")]
     CommandFailed { name: String },
 
     #[error("Command failed because of parse error: {0}")]

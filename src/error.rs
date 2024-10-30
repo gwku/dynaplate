@@ -17,4 +17,7 @@ pub enum AppError {
 
     #[error("Provided config can not be read: {0}")]
     ConfigFileRead(#[from] io::Error),
+
+    #[error("Invalid input: {0}")]
+    InvalidInput(#[from] inquire::InquireError),
 }

@@ -1,6 +1,6 @@
-use crate::parser::error::ParseResult;
+use crate::parser::traits::condition::ConditionTrait;
 use crate::parser::traits::CommandTrait;
-use crate::parser::Variable;
+use crate::parser::Condition;
 use serde::Deserialize;
 use std::fmt;
 
@@ -8,14 +8,15 @@ use std::fmt;
 pub struct Command {
     pub name: String,
     pub command: String,
+    pub conditions: Option<Vec<Condition>>,
 }
 
 impl fmt::Display for Command {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "Command:\n  Name: {}\n  Command: {}\n",
-            self.name, self.command
+            "Command:\n  Name: {}\n  Command: {}\n  Conditions: {:?}",
+            self.name, self.command, self.conditions
         )
     }
 }
@@ -28,8 +29,10 @@ impl CommandTrait for Command {
     fn name(&self) -> &str {
         &self.name
     }
+}
 
-    fn is_applicable(&self, _variables: &[Variable]) -> ParseResult<bool> {
-        Ok(true)
+impl ConditionTrait for Command {
+    fn get_conditions(&self) -> Option<&[Condition]> {
+        self.conditions.as_deref()
     }
 }
