@@ -1,3 +1,4 @@
+mod error;
 pub mod models;
 pub mod traits;
 
@@ -11,8 +12,15 @@ pub use models::TemplateFile;
 pub use models::TemplateFileType;
 pub use models::Variable;
 pub use models::VariableValue;
-use std::error::Error;
 
-pub fn from_yaml(input: &str) -> Result<Configuration, Box<dyn Error>> {
-    serde_yml::from_str(input).map_err(|e| format!("Failed to parse config file: {}", e).into())
+pub use error::ParserError;
+
+use crate::parser::error::ParseResult;
+
+pub fn from_yaml(input: &str) -> ParseResult<Configuration> {
+    serde_yml::from_str(input).map_err(ParserError::YamlParseError)
+}
+
+pub fn from_json(input: &str) -> ParseResult<Configuration> {
+    serde_json::from_str(input).map_err(ParserError::JsonParseError)
 }

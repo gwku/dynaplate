@@ -1,5 +1,6 @@
+use crate::parser::error::ParseResult;
 use crate::parser::traits::CommandTrait;
-use crate::parser::{Condition, ConditionOperator, Variable};
+use crate::parser::{Condition, ConditionOperator, ParserError, Variable};
 use serde::Deserialize;
 use std::fmt;
 
@@ -7,22 +8,17 @@ use std::fmt;
 pub struct Dependency {
     pub name: String,
     pub command: String,
-    pub when: Option<Vec<Condition>>,
+    pub condition: Option<Vec<Condition>>,
 }
 
 impl Dependency {
-    pub fn is_applicable(&self, variables: &[Variable]) -> Result<bool, String> {
-        if let Some(conditions) = &self.when {
+    pub fn is_applicable(&self, variables: &[Variable]) -> ParseResult<bool> {
+        if let Some(conditions) = &self.condition {
             for condition in conditions {
                 let var = variables
                     .iter()
                     .find(|var| var.name == condition.variable)
-                    .ok_or_else(|| {
-                        format!(
-                            "Invalid variable provided for condition: {}",
-                            condition.variable
-                        )
-                    })?;
+                    .ok_or_else(|| ParserError::VariableDoesNotExist(condition.variable.clone()))?;
 
                 let condition_applicable = match condition.operator {
                     ConditionOperator::Equals => var.value.as_ref() == Some(&condition.value),
@@ -42,7 +38,7 @@ impl fmt::Display for Dependency {
         write!(
             f,
             "Dependency:\n  Name: {}\n  Command: {}\n  When: {:?}",
-            self.name, self.command, self.when
+            self.name, self.command, self.condition
         )
     }
 }
@@ -56,7 +52,7 @@ impl CommandTrait for Dependency {
         &self.name
     }
 
-    fn is_applicable(&self, variables: &[Variable]) -> Result<bool, String> {
+    fn is_applicable(&self, variables: &[Variable]) -> ParseResult<bool> {
         self.is_applicable(variables)
     }
 }

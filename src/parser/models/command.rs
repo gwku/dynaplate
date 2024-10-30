@@ -1,3 +1,4 @@
+use crate::parser::error::ParseResult;
 use crate::parser::traits::CommandTrait;
 use crate::parser::Variable;
 use serde::Deserialize;
@@ -28,7 +29,7 @@ impl CommandTrait for Command {
         &self.name
     }
 
-    fn is_applicable(&self, _variables: &[Variable]) -> Result<bool, String> {
+    fn is_applicable(&self, _variables: &[Variable]) -> ParseResult<bool> {
         Ok(true)
     }
 }

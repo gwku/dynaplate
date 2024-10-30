@@ -16,7 +16,7 @@ impl fmt::Display for VariableValue {
             VariableValue::Select(o) => write!(
                 f,
                 "SELECT ({})",
-                o.iter().fold(String::new(), |acc, x| acc + &x + ", ")
+                o.iter().fold(String::new(), |acc, x| acc + x + ", ")
             ),
         }
     }

@@ -1,11 +1,12 @@
 use crate::parser::TemplateFileType;
 use serde::Deserialize;
 use std::fmt;
+use std::path::PathBuf;
 
 #[derive(Debug, Deserialize)]
 pub struct TemplateFile {
-    pub source: String,
-    pub destination: String,
+    pub source: PathBuf,
+    pub destination: PathBuf,
     pub file_type: TemplateFileType,
 }
 
@@ -14,7 +15,8 @@ impl fmt::Display for TemplateFile {
         write!(
             f,
             "TemplateFile:\nSource: {}\nDestination: {}\n",
-            self.source, self.destination
+            self.source.to_string_lossy(),
+            self.destination.to_string_lossy()
         )
     }
 }

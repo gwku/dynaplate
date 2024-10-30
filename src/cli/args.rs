@@ -6,13 +6,18 @@ use std::path::PathBuf;
 #[command(about = "A tool to automate project templates", version = "1.0")]
 pub struct Args {
     #[clap(required = true)]
-    pub project_dir: PathBuf,
-    #[arg(short, long)]
     pub config: PathBuf,
-    #[arg(short, long, action)]
-    #[clap(default_value = "false", short = 'd')]
-    pub dry_run: bool,
-    #[arg(short, long, action)]
-    #[clap(default_value = "false", short = 'v')]
-    pub verbose: bool,
+
+    #[clap(required = true)]
+    pub project_dir: PathBuf,
+
+    #[clap(short = 't', long, default_value_t, value_enum)]
+    pub config_type: ConfigType,
+}
+
+#[derive(clap::ValueEnum, Clone, Copy, Debug, PartialEq, Default)]
+pub enum ConfigType {
+    #[default]
+    Yaml,
+    Json,
 }
