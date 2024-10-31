@@ -90,7 +90,7 @@ fn extract_arguments(
 
     let chars: Vec<char> = cmd_with_variables_replaced.chars().collect();
 
-    for (_, c) in chars.iter().enumerate() {
+    for c in chars.iter() {
         match *c {
             '"' | '\'' => {
                 // Toggle the quoted state

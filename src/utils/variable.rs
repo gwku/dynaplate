@@ -40,7 +40,7 @@ pub fn replace_variables(
                         result.push_str(&prepare_command_string(&b.to_string(), clean))
                     }
                     Some(VariableValue::Select(options)) => {
-                        if let Some(selected) = options.get(0) {
+                        if let Some(selected) = options.first() {
                             result.push_str(&prepare_command_string(selected, clean));
                         } else {
                             return Err(UtilsError::VariableNotSet(format!(
