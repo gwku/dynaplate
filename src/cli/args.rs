@@ -13,6 +13,9 @@ pub struct Args {
 
     #[clap(short = 't', long, default_value_t, value_enum)]
     pub config_type: ConfigType,
+
+    #[clap(short = 'c', long, action = clap::ArgAction::SetTrue)]
+    pub clean: Option<bool>,
 }
 
 #[derive(clap::ValueEnum, Clone, Copy, Debug, PartialEq, Default)]

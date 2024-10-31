@@ -25,9 +25,7 @@ fn main() -> Result<(), AppError> {
         ConfigType::Json => parser::from_json(&config_string)?,
         ConfigType::Yaml => parser::from_yaml(&config_string)?,
     };
-
-    ensure_project_existence(&args.project_dir)?;
-
+    
     let envs = &config.environment.to_env_map();
     let variables = gather_variables(&config.variables)?;
 
@@ -35,9 +33,11 @@ fn main() -> Result<(), AppError> {
         path: args.project_dir,
         envs: envs.to_owned(),
         variables,
+        clean: args.clean.unwrap(),
     };
 
     execute_commands(&config.pre_commands, &project);
+    ensure_project_existence(&project.path)?;
     copy_template_files(&config.template_files);
     execute_commands(&config.dependencies, &project);
     execute_commands(&config.post_commands, &project);
