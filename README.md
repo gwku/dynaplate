@@ -31,9 +31,17 @@ Dynaplate includes a default variable:
 ## Possible variable types
 
 Several variable types are available:
+
 - string (any text)
 - boolean (`true` or `false`)
 - select (specify `options` with array of strings)
+
+## Possible condition operators
+
+Several condition operators are available (more will be added: see roadmap below):
+
+- equals
+- notequals
 
 ## Example Configuration
 
@@ -127,3 +135,5 @@ Dynaplate is continually evolving, and future enhancements may include:
 - [ ] Example configurations to demonstrate use cases.
 - [ ] Improved error handling (all validation at once)
 - [ ] Improved output (colors, structured, etc.)
+
+If you have any suggestions, want to contribute or give feedback: open an issue or contact me (see my profile)
