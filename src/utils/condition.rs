@@ -19,6 +19,12 @@ pub fn has_applicable_conditions(
                     (Some(VariableValue::Select(v)), VariableValue::String(c)) => v == c, // TODO: add support for MultipleSelect
                     _ => false, // Type mismatch or None value
                 },
+                ConditionOperator::NotEquals => match (&var.value, &condition.value) {
+                    (Some(VariableValue::String(v)), VariableValue::String(c)) => v != c,
+                    (Some(VariableValue::Boolean(v)), VariableValue::Boolean(c)) => v != c,
+                    (Some(VariableValue::Select(v)), VariableValue::String(c)) => v != c, // TODO: add support for MultipleSelect
+                    _ => false, // Type mismatch or None value
+                },
             };
 
             if condition_applicable {
