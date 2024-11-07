@@ -1,7 +1,8 @@
 use serde::Deserialize;
 use std::fmt;
 
-#[derive(Debug, Deserialize, PartialEq)]
+#[derive(Debug, Deserialize, PartialEq, Clone)]
+#[serde(untagged)]
 pub enum VariableValue {
     String(String),
     Boolean(bool),

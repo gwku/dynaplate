@@ -20,4 +20,7 @@ pub enum AppError {
 
     #[error("Invalid input: {0}")]
     InvalidInput(#[from] inquire::InquireError),
+    
+    #[error("Invalid working directory")]
+    InvalidWorkspaceDir,
 }

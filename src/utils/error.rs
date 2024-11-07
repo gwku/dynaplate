@@ -1,5 +1,6 @@
 use crate::parser::ParserError;
 use std::io;
+use std::io::Error;
 use thiserror::Error;
 
 pub type UtilsResult<T> = Result<T, UtilsError>;
@@ -12,11 +13,8 @@ pub enum UtilsError {
     #[error("Command not applicable: {name}")]
     CommandNotApplicable { name: String },
 
-    #[error("Command is empty {name}")]
-    CommandIsEmpty { name: String },
-
-    #[error("Command {name} failed")]
-    CommandFailed { name: String },
+    #[error("Command {name} failed: {source}")]
+    CommandFailed { name: String, source: Error },
 
     #[error("Command failed because of parse error: {0}")]
     CommandFailedDueToParseError(#[from] ParserError),

@@ -59,6 +59,22 @@ fn validate_configuration(configuration: &Configuration) -> ParseResult<()> {
                                 default_value, variable.name, options
                             )));
                         }
+
+                        // Check if given value is valid option
+                        if let Some(value) = &variable.value {
+                            match value {
+                                VariableValue::String(str) => {
+                                    if !options.contains(str) {
+                                        return Err(ParserError::VariableHasIncorrectValue {
+                                            name: variable.name.clone(),
+                                            val: str.to_string(),
+                                        });
+                                    }
+                                }
+                                VariableValue::Boolean(_) => {}
+                                VariableValue::Select(_) => {}
+                            }
+                        }
                     } else {
                         return Err(ParserError::InvalidDefaultValue(format!(
                             "Select variable '{}' has no options defined.",
@@ -69,5 +85,24 @@ fn validate_configuration(configuration: &Configuration) -> ParseResult<()> {
             }
         }
     }
+
+    if let Some(command) = configuration.pre_commands.iter().find(|s| s.command.is_empty()) {
+        return Err(ParserError::CommandIsEmpty {
+            name: command.name.clone(),
+        });
+    }
+
+    if let Some(command) = configuration.post_commands.iter().find(|s| s.command.is_empty()) {
+        return Err(ParserError::CommandIsEmpty {
+            name: command.name.clone(),
+        });
+    }
+
+    if let Some(command) = configuration.dependencies.iter().find(|s| s.command.is_empty()) {
+        return Err(ParserError::CommandIsEmpty {
+            name: command.name.clone(),
+        });
+    }
+
     Ok(())
 }

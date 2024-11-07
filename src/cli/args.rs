@@ -8,8 +8,8 @@ pub struct Args {
     #[clap(required = true)]
     pub config: PathBuf,
 
-    #[clap(required = true)]
-    pub project_dir: PathBuf,
+    #[clap(short = 'd', long)]
+    pub working_dir: Option<PathBuf>,
 
     #[clap(short = 't', long, default_value_t, value_enum)]
     pub config_type: ConfigType,

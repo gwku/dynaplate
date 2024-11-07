@@ -5,14 +5,13 @@ use crate::utils::condition::has_applicable_conditions;
 use crate::utils::error::UtilsResult;
 use crate::utils::variable::replace_variables;
 use crate::utils::UtilsError;
-use crate::utils::UtilsError::{
-    CommandFailedDueToParseError, CommandIsEmpty, CommandNotApplicable,
-};
+use crate::utils::UtilsError::{CommandFailedDueToParseError, CommandNotApplicable};
 use std::collections::HashMap;
+use std::io::Error;
 use std::path::PathBuf;
 
 pub struct Project {
-    pub path: PathBuf,
+    pub working_dir: PathBuf,
     pub envs: HashMap<String, String>,
     pub variables: Vec<Variable>,
     pub clean: bool,
@@ -20,6 +19,7 @@ pub struct Project {
 
 pub fn execute_commands<T: CommandTrait + ConditionTrait>(commands: &[T], project: &Project) {
     for command in commands {
+        println!("Executing command '{}'", command.name());
         match execute_command(command, project) {
             Ok(_) => {
                 println!("Successfully executed command: {}", command.name());
@@ -56,13 +56,13 @@ pub fn execute_command<T: CommandTrait + ConditionTrait>(
     let cmd_with_variables_replaced =
         replace_variables(command.command(), &project.variables, &project.clean)?;
 
-    let args = match extract_arguments(command.name().to_string(), cmd_with_variables_replaced) {
+    let args = match extract_arguments(cmd_with_variables_replaced) {
         Ok(value) => value,
         Err(value) => return value,
     };
 
     let mut cmd = std::process::Command::new(&args[0]);
-    cmd.current_dir(&project.path).envs(&project.envs);
+    cmd.current_dir(&project.working_dir).envs(&project.envs);
 
     if args.len() > 1 {
         cmd.args(&args[1..]);
@@ -72,18 +72,17 @@ pub fn execute_command<T: CommandTrait + ConditionTrait>(
             true => Ok(()),
             false => Err(UtilsError::CommandFailed {
                 name: command.name().to_string(),
+                source: Error::last_os_error(),
             }),
         },
-        Err(_) => Err(UtilsError::CommandFailed {
+        Err(e) => Err(UtilsError::CommandFailed {
             name: command.name().to_string(),
+            source: e,
         }),
     }
 }
 
-fn extract_arguments(
-    command_name: String,
-    cmd_with_variables_replaced: String,
-) -> Result<Vec<String>, UtilsResult<()>> {
+fn extract_arguments(cmd_with_variables_replaced: String) -> Result<Vec<String>, UtilsResult<()>> {
     let mut args = Vec::new();
     let mut current_arg = String::new();
     let mut in_quotes = false;
@@ -115,8 +114,5 @@ fn extract_arguments(
         args.push(current_arg);
     }
 
-    if args.is_empty() {
-        return Err(Err(CommandIsEmpty { name: command_name }));
-    }
     Ok(args)
 }

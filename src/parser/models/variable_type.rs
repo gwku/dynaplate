@@ -14,7 +14,7 @@ impl Display for VariableType {
         let variant_name = match self {
             VariableType::String => "String",
             VariableType::Boolean => "Boolean",
-            VariableType::Select => "Select",
+            VariableType::Select => "Select"
         };
         write!(f, "Variable type: {}", variant_name)
     }

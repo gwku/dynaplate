@@ -3,7 +3,7 @@ use crate::parser::VariableValue;
 use serde::Deserialize;
 use std::fmt;
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 pub struct Variable {
     pub name: String,
     pub description: String,
@@ -14,7 +14,6 @@ pub struct Variable {
     pub value: Option<VariableValue>,
 }
 
-// Implement Display for Variable
 impl fmt::Display for Variable {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(

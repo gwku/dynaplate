@@ -10,9 +10,15 @@ pub enum ParserError {
     #[error("JSON parsing error: {0}")]
     JsonParseError(#[from] serde_json::Error),
 
-    #[error("Variable does not exist: {0}")]
+    #[error("Variable '{0}' does not exist")]
     VariableDoesNotExist(String),
+
+    #[error("Variable '{name}' has incorrect value: {val}")]
+    VariableHasIncorrectValue {name: String, val: String},
 
     #[error("Specified default value is invalid: {0}")]
     InvalidDefaultValue(String),
+    
+    #[error("Command '{name}' is empty")]
+    CommandIsEmpty { name: String },
 }
