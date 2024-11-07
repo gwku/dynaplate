@@ -124,6 +124,11 @@ post_commands:
     command: "npm run dev"
 ```
 
+Note: if you need to set a variable programmatically, set the key `value` to what you want, depending on the type:
+- `string`: `any text here`
+- `boolean`: `true` or `false`
+- `select`: `existing option here`
+
 ## Roadmap (Non-Exhaustive)
 
 Dynaplate is continually evolving, and future enhancements may include:
