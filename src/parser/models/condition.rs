@@ -32,7 +32,7 @@ where
                         .ok_or_else(|| Error::custom("Expected a string in array"))
                 })
                 .collect();
-            
+
             // TODO: add support for multiselect
             strings?
                 .first()

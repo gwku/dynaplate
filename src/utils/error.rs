@@ -18,7 +18,7 @@ pub enum UtilsError {
 
     #[error("Command failed because of parse error: {0}")]
     CommandFailedDueToParseError(#[from] ParserError),
-    
+
     #[error("Specified variable '{0}' is not set")]
     VariableNotSet(String),
 }

@@ -14,11 +14,11 @@ pub enum ParserError {
     VariableDoesNotExist(String),
 
     #[error("Variable '{name}' has incorrect value: {val}")]
-    VariableHasIncorrectValue {name: String, val: String},
+    VariableHasIncorrectValue { name: String, val: String },
 
     #[error("Specified default value is invalid: {0}")]
     InvalidDefaultValue(String),
-    
+
     #[error("Command '{name}' is empty")]
     CommandIsEmpty { name: String },
 }

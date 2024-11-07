@@ -1,6 +1,5 @@
 use serde::Deserialize;
 use std::fmt;
-use std::fmt::write;
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]

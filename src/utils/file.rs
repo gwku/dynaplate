@@ -19,13 +19,13 @@ pub fn copy_template_files(files: &[TemplateFile], variables: &[Variable]) -> Ut
     for file in files.iter() {
         let file_source = PathBuf::from(replace_variables(
             &file.source.display().to_string(),
-            &variables,
+            variables,
             &false,
         )?);
 
         let file_destination = PathBuf::from(replace_variables(
             &file.destination.display().to_string(),
-            &variables,
+            variables,
             &false,
         )?);
 
@@ -91,7 +91,7 @@ pub fn copy_template_files(files: &[TemplateFile], variables: &[Variable]) -> Ut
         }
     }
     println!("Template files have been processed!");
-    
+
     Ok(())
 }
 

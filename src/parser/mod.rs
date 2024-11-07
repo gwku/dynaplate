@@ -86,19 +86,31 @@ fn validate_configuration(configuration: &Configuration) -> ParseResult<()> {
         }
     }
 
-    if let Some(command) = configuration.pre_commands.iter().find(|s| s.command.is_empty()) {
+    if let Some(command) = configuration
+        .pre_commands
+        .iter()
+        .find(|s| s.command.is_empty())
+    {
         return Err(ParserError::CommandIsEmpty {
             name: command.name.clone(),
         });
     }
 
-    if let Some(command) = configuration.post_commands.iter().find(|s| s.command.is_empty()) {
+    if let Some(command) = configuration
+        .post_commands
+        .iter()
+        .find(|s| s.command.is_empty())
+    {
         return Err(ParserError::CommandIsEmpty {
             name: command.name.clone(),
         });
     }
 
-    if let Some(command) = configuration.dependencies.iter().find(|s| s.command.is_empty()) {
+    if let Some(command) = configuration
+        .dependencies
+        .iter()
+        .find(|s| s.command.is_empty())
+    {
         return Err(ParserError::CommandIsEmpty {
             name: command.name.clone(),
         });

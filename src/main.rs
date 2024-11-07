@@ -62,7 +62,7 @@ fn run() -> Result<(), AppError> {
     let working_dir = match working_dir_var {
         None => Err(InvalidWorkspaceDir),
         Some(value) => match value {
-            VariableValue::String(string) => match PathBuf::from_str(&*string) {
+            VariableValue::String(string) => match PathBuf::from_str(&string) {
                 Ok(path) => Ok(path),
                 Err(_) => Err(InvalidWorkspaceDir),
             },
@@ -92,10 +92,7 @@ fn add_default_variables(working_dir: Option<PathBuf>) -> Result<Vec<Variable>, 
         default: Some("./".to_string()),
         var_type: VariableType::String,
         options: None,
-        value: match working_dir {
-            None => None,
-            Some(value) => Some(VariableValue::String(value.display().to_string())),
-        },
+        value: working_dir.map(|value| VariableValue::String(value.display().to_string())),
     };
 
     Ok(vec![working_dir_var])
