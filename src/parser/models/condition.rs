@@ -32,7 +32,12 @@ where
                         .ok_or_else(|| Error::custom("Expected a string in array"))
                 })
                 .collect();
-            strings.map(VariableValue::Select)
+            
+            // TODO: add support for multiselect
+            strings?
+                .first()
+                .map(|s| VariableValue::String(s.clone()))
+                .ok_or_else(|| Error::custom("Expected at least one string in the array"))
         }
         _ => Err(Error::custom("Expected a string, boolean, or array")),
     }

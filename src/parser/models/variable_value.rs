@@ -6,7 +6,7 @@ use std::fmt;
 pub enum VariableValue {
     String(String),
     Boolean(bool),
-    Select(Vec<String>),
+    Select(String),
 }
 
 impl fmt::Display for VariableValue {
@@ -17,7 +17,8 @@ impl fmt::Display for VariableValue {
             VariableValue::Select(o) => write!(
                 f,
                 "SELECT ({})",
-                o.iter().fold(String::new(), |acc, x| acc + x + ", ")
+                // o.iter().fold(String::new(), |acc, x| acc + x + ", ")
+                o
             ),
         }
     }

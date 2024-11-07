@@ -1,5 +1,5 @@
 use crate::parser::error::ParseResult;
-use crate::parser::{Condition, ConditionOperator, ParserError, Variable};
+use crate::parser::{Condition, ConditionOperator, ParserError, Variable, VariableValue};
 
 pub fn has_applicable_conditions(
     conditions: Option<&[Condition]>,
@@ -13,7 +13,12 @@ pub fn has_applicable_conditions(
                 .ok_or_else(|| ParserError::VariableDoesNotExist(condition.variable.clone()))?;
 
             let condition_applicable = match condition.operator {
-                ConditionOperator::Equals => var.value.as_ref() == Some(&condition.value),
+                ConditionOperator::Equals => match (&var.value, &condition.value) {
+                    (Some(VariableValue::String(v)), VariableValue::String(c)) => v == c,
+                    (Some(VariableValue::Boolean(v)), VariableValue::Boolean(c)) => v == c,
+                    (Some(VariableValue::Select(v)), VariableValue::String(c)) => v == c, // TODO: add support for MultipleSelect
+                    _ => false, // Type mismatch or None value
+                },
             };
 
             if condition_applicable {

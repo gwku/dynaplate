@@ -11,11 +11,7 @@ fn prepare_command_string(value: &str, clean: &bool) -> String {
     }
 }
 
-pub fn replace_variables(
-    input: &str,
-    variables: &[Variable],
-    clean: &bool,
-) -> UtilsResult<String> {
+pub fn replace_variables(input: &str, variables: &[Variable], clean: &bool) -> UtilsResult<String> {
     let variables_map: HashMap<_, _> = variables
         .iter()
         .filter_map(|variable| variable.value.as_ref().map(|v| (variable.name.as_str(), v)))
@@ -39,9 +35,9 @@ pub fn replace_variables(
                     Some(VariableValue::Boolean(b)) => {
                         result.push_str(&prepare_command_string(&b.to_string(), clean))
                     }
-                    Some(VariableValue::Select(options)) => {
-                        if let Some(selected) = options.first() {
-                            result.push_str(&prepare_command_string(selected, clean));
+                    Some(VariableValue::Select(option)) => {
+                        if !option.is_empty() {
+                            result.push_str(&prepare_command_string(option, clean));
                         } else {
                             return Err(UtilsError::VariableNotSet(format!(
                                 "No value for {{{}}}",

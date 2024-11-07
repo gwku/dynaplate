@@ -19,10 +19,10 @@ pub struct Project {
 
 pub fn execute_commands<T: CommandTrait + ConditionTrait>(commands: &[T], project: &Project) {
     for command in commands {
-        println!("Executing command '{}'", command.name());
+        println!("Processing command '{}'", command.name());
         match execute_command(command, project) {
             Ok(_) => {
-                println!("Successfully executed command: {}", command.name());
+                println!("Successfully processed command: {}", command.name());
             }
             Err(e) => match e {
                 CommandNotApplicable { .. } => {

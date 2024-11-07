@@ -50,7 +50,7 @@ pub fn prompt_for_variable(variable: &Variable) -> Result<Option<VariableValue>,
                 .prompt()
                 .map_err(AppError::from)?;
 
-            Ok(Some(VariableValue::Select(vec![answer])))
+            Ok(Some(VariableValue::Select(answer)))
         }
     }
 }
