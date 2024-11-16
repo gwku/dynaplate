@@ -7,7 +7,7 @@ use crate::utils::variable::replace_variables;
 use crate::utils::UtilsError;
 use crate::utils::UtilsError::{CommandFailedDueToParseError, CommandNotApplicable};
 use std::collections::HashMap;
-use std::io::Error;
+use std::io::{Error, ErrorKind};
 use std::path::PathBuf;
 
 pub struct Project {
@@ -55,25 +55,22 @@ pub fn execute_command<T: CommandTrait + ConditionTrait>(
 
     let cmd_with_variables_replaced =
         replace_variables(command.command(), &project.variables, &project.clean)?;
+    
+    let mut cmd = std::process::Command::new("sh");
+    cmd.arg("-c").arg(cmd_with_variables_replaced);
 
-    let args = match extract_arguments(cmd_with_variables_replaced) {
-        Ok(value) => value,
-        Err(value) => return value,
-    };
-
-    let mut cmd = std::process::Command::new(&args[0]);
     cmd.current_dir(&project.working_dir).envs(&project.envs);
 
-    if args.len() > 1 {
-        cmd.args(&args[1..]);
-    }
-    match cmd.status() {
-        Ok(status) => match status.success() {
+    match cmd.output() {
+        Ok(output) => match output.status.success() {
             true => Ok(()),
-            false => Err(UtilsError::CommandFailed {
-                name: command.name().to_string(),
-                source: Error::last_os_error(),
-            }),
+            false => {
+                let error_message = String::from_utf8_lossy(&output.stderr);
+                Err(UtilsError::CommandFailed {
+                    name: command.name().to_string(),
+                    source: Error::new(ErrorKind::Other, error_message.to_string()),
+                })
+            }
         },
         Err(e) => Err(UtilsError::CommandFailed {
             name: command.name().to_string(),
