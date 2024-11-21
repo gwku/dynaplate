@@ -32,12 +32,19 @@ pub fn copy_template_files(files: &[TemplateFile], variables: &[Variable]) -> Ut
         match file.file_type {
             TemplateFileType::Folder => {
                 // Create destination folder if it does not exist
-                if fs::exists(&file_destination).is_err()
-                    && fs::create_dir_all(&file_destination).is_err()
-                {
+                if let Err(e) = fs::exists(&file_destination) {
                     eprintln!(
-                        "Template files: failed to create destination folder: '{}'",
-                        &file_destination.to_string_lossy()
+                        "Template files: failed to check existence of destination folder '{}': {}",
+                        &file_destination.to_string_lossy(),
+                        e
+                    );
+                }
+
+                if let Err(e) = fs::create_dir_all(&file_destination) {
+                    eprintln!(
+                        "Template files: failed to create destination folder '{}': {}",
+                        &file_destination.to_string_lossy(),
+                        e
                     );
                 }
 
