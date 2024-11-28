@@ -115,8 +115,13 @@ pub fn copy_folder_contents_with_gitignore<P: AsRef<Path>>(
     );
 
     let walker = WalkBuilder::new(source_path)
-        .follow_links(true) // Follow symbolic links if needed
-        .standard_filters(*use_filters) // Respect .gitignore and other ignore files
+        .follow_links(true)
+        .hidden(false)
+        .parents(true)
+        .ignore(*use_filters)
+        .git_ignore(*use_filters)
+        .git_global(*use_filters)
+        .git_exclude(*use_filters)
         .build();
 
     for entry in walker {
