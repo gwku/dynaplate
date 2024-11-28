@@ -79,7 +79,7 @@ fn run() -> Result<(), AppError> {
 
     execute_commands(&config.pre_commands, &project);
     ensure_project_existence(&project.working_dir)?;
-    copy_template_files(&config.template_files, &variables)?;
+    copy_template_files(&config.template_files, &variables, &args.use_filters.unwrap())?;
     execute_commands(&config.dependencies, &project);
     execute_commands(&config.post_commands, &project);
     Ok(())

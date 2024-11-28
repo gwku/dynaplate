@@ -16,6 +16,9 @@ pub struct Args {
 
     #[clap(short = 'c', long, action = clap::ArgAction::SetTrue)]
     pub clean: Option<bool>,
+
+    #[clap(short = 'f', long, action = clap::ArgAction::SetFalse)]
+    pub use_filters: Option<bool>,
 }
 
 #[derive(clap::ValueEnum, Clone, Copy, Debug, PartialEq, Default)]
