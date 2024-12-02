@@ -75,6 +75,17 @@ pub fn copy_template_files(
                         &file.file_type
                     );
                 }
+                if let Some(parent) = &file_destination.parent() {
+                    if let Err(e) = fs::create_dir_all(parent) {
+                        eprintln!(
+                            "Failed to create parent directory '{}': {}",
+                            parent.display(),
+                            e
+                        );
+                        continue;
+                    }
+                }
+                
                 match fs::copy(&file_source, &file_destination) {
                     Ok(_) => {
                         println!(
