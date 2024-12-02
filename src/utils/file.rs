@@ -133,12 +133,14 @@ pub fn copy_folder_contents_with_gitignore<P: AsRef<Path>>(
         .git_ignore(*use_filters)
         .git_global(*use_filters)
         .git_exclude(*use_filters)
+        .add_custom_ignore_filename(".dignore")
         .build();
 
     for entry in walker {
         match entry {
             Ok(result) => {
                 let entry_path = result.path();
+                println!("Entry: {}", entry_path.to_string_lossy());
                 match entry_path.strip_prefix(source_path) {
                     Ok(relative_path) => {
                         let dest_path = destination_path.join(relative_path);
